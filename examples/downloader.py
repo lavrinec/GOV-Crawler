@@ -14,6 +14,7 @@ chrome_options.add_argument("--headless")
 
 # chromedriver-2-46 can deal with Chrome 71, 72, 73
 # chromedriver-73 can only deal with Chrome 73
+# executable_path goes from the root of the project forward, not from current directory !!!
 driver = webdriver.Chrome(executable_path='./webdrivers/chromedriver-2-46', chrome_options=chrome_options)
 driver.get("http://fri.uni-lj.si")
 
