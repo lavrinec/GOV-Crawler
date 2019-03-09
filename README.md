@@ -27,5 +27,5 @@ The project uses Selenium which utilizes Chrome for headless browser.
 The ChromeDriver is already provided in the project, so make sure you have Chrome.
 
 - Chrome: Go to [Chrome website](https://www.google.com/chrome/) and download and install it.
-  - or don't if you already have it and you are brave enough, just make sure it's version 71, 72 or 73
+  - or don't if you already have it and you are brave enough, just make sure it's version 71, 72 or 73 (hint: update)
   - Linux: Do not use `snap` or other tools for installing Chrome.

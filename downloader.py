@@ -9,7 +9,7 @@ chrome_options = Options()
 chrome_options.add_argument("--headless")
 
 # location of chrome (like exe file on Windows), not chrome driver !!!
-# find and change this only if it doesn't work when commented out
+# find the location of Chrome and change this only if it doesn't work when commented out
 # chrome_options.binary_location = ''
 
 # chromedriver-2-46 can deal with Chrome 71, 72, 73
