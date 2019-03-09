@@ -109,4 +109,4 @@ venv.bak/
 .idea
 
 #database string
-connection.txt
+/connection.txt
