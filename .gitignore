@@ -108,5 +108,5 @@ venv.bak/
 .DS_store
 .idea
 
-#database string
+# database string
 /connection.txt
