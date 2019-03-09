@@ -1,7 +1,8 @@
 # savers
 # probably call work_with_db from db_manager.py
 
-# from db_manager import work_with_db # something something
+# import searches from the root of the project forward, not from current directory !!!
+from src.db_manager import work_with_db
 
 def save_site_to_db():
     return True
