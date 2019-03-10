@@ -1,6 +1,7 @@
 # everything related to getting the html code and parsing it
 from src import webdriver
 from bs4 import BeautifulSoup
+import json
 
 
 def visit_url(url):
@@ -22,6 +23,12 @@ def get_url_content(url):
     print("get content for", url)
 
     webdriver.browser.get(url)
+    har = json.loads(webdriver.browser.get_log('har')[0]['message'])
+
+    # prints status code and text
+    print(har['log']['entries'][0]['response']['status'])
+    print(har['log']['entries'][0]['response']['statusText'])
+
     content = webdriver.browser.page_source
     return content
 
