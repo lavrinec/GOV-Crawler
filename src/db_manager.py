@@ -16,10 +16,6 @@ def connect_to_db():
     return Session()
 
 
-def work_with_db(sql_statement):
-    return True
-
-
 def init():
     global session
     session = connect_to_db()
