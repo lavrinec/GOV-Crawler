@@ -6,9 +6,10 @@ chrome_options.add_argument("--headless")
 
 
 def init():
-    global driver
-    driver = webdriver.Chrome(executable_path='./webdrivers/chromedriver-2-46', chrome_options=chrome_options)
+    global browser
+    browser = webdriver.Chrome(executable_path='./webdrivers/chromedriver-2-46', chrome_options=chrome_options)
 
 
 def close():
-    driver.close()
+    print("browser closed")
+    browser.close()

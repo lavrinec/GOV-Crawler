@@ -13,12 +13,16 @@ def crawler_worker():
     db_manager.init()
     print("session", db_manager.session)
 
+    # get_all_sites() and # get_all_pages() should be removed
+    # here should come while ... getting pages from db, visiting them, etc.
+
     get_all_sites()
     get_all_pages()
 
+    webdriver.init()
+    visit_url('https://google.com')
 
-    # webdriver.init()
-    # visit_url('https://google.com')
-    # webdriver.close()
+    # this must be at the end when worker finishes
+    webdriver.close()
 
     return True
