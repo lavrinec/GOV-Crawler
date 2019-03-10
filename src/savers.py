@@ -1,8 +1,5 @@
 # savers
-# probably call work_with_db from db_manager.py
 
-# import searches from the root of the project forward, not from current directory !!!
-from src.db_manager import work_with_db
 
 def save_site_to_db():
     return True
@@ -23,6 +20,7 @@ def save_documents_to_db(doc_array, page_id):
 
 def save_document_to_db(url, page_id):
     return True
+
 
 ### saving images
 

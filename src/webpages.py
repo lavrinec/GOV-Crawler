@@ -15,7 +15,6 @@ def get_url_content(url):
 
     webdriver.browser.get(url)
 
-
     content = webdriver.browser.page_source
     print("page content")
     print(content)
