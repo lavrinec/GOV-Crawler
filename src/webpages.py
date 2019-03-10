@@ -16,7 +16,7 @@ def visit_url(url):
 def get_url_content(url):
     driver = webdriver.Chrome(executable_path='./webdrivers/chromedriver-2-46', chrome_options=chrome_options)
 
-    for i in range(10):
+    for i in range(2):
         driver.get(url)
 
     driver.close()
