@@ -103,6 +103,20 @@ def get_not_reserved(param, *restrictions):
 
 
 def finish_page(page):
+    print("finish page")
     # TODO set page new page_type_code
 
     cancel_reservation(page)
+
+
+# last resort if something goes wrong (you stop a program at the wrong time)
+# call these functions to reset all reservations of pages, sites
+
+def cancel_all_sites_reservations():
+    for site in db_manager.session.query(Site).order_by(Site.id):
+        cancel_reservation(site)
+
+
+def cancel_all_pages_reservations():
+    for page in db_manager.session.query(Page).order_by(Page.id):
+        cancel_reservation(page)

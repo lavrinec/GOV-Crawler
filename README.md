@@ -19,10 +19,14 @@ All further instructions are written with assumption that Python 3 is your defau
 #### Libraries
 
 - Selenium: install Selenium by running `pip install selenium` in console
-  - Linux: if you get an `EnvironmentError`, run `pip install selenium --user`
-- psycopg2 vs psycopg2-binary: `pip install psycopg2 --user`
 
-- sqlalchemy: run `pip install sqlalchemy`, in case of `EnvironmentError` run `pip install sqlalchemy --user`
+- psycopg2 vs psycopg2-binary: run `pip install psycopg2`
+
+- sqlalchemy: run `pip install sqlalchemy`
+
+- BeautifulSoup4: run `pip install bs4`
+
+In case of `EnvironmentError`, add `--user` at the end of `pip install <module>`
 
 
 ### Browser
