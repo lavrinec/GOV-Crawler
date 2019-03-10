@@ -5,6 +5,7 @@ from src.page import Page
 from src.site import Site
 from sqlalchemy import and_, func, update
 from random import randint
+from datetime import datetime
 
 
 def get_frontier_from_db():
@@ -56,16 +57,25 @@ def get_site_data(site):
     get_site_sitemap(site)
 
 
+def cancel_reservation(input):
+    input.reservation_id = None
+    input.reserved = None
+    db_manager.session.commit()
+
+
 def get_new_site():
     site = get_not_reserved_site()
     if site is None:
         return None
+    print("New site ", site.domain)
     get_site_data(site)
+    cancel_reservation(site)
     return site
 
 
 def get_not_reserved(param, *restrictions):
     rand = randint(-9999999, 9999999)
+    timestamp = datetime.now()
 
     # Generate restriction
     sq = db_manager.session.query(param.id).filter(
@@ -75,7 +85,7 @@ def get_not_reserved(param, *restrictions):
 
     # Generate update
     q = update(param) \
-        .values({param.reservation_id: rand}) \
+        .values({param.reservation_id: rand, param.reserved: timestamp}) \
         .where(param.id == sq.as_scalar())
 
     # Execute update
@@ -87,3 +97,9 @@ def get_not_reserved(param, *restrictions):
         return db_manager.session.query(param).filter(param.reservation_id == rand).one()
     except:
         return None
+
+
+def finish_page(page):
+    # TODO set page new page_type_code
+
+    cancel_reservation(page)
