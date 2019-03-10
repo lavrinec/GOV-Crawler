@@ -1,7 +1,7 @@
 # crawler worker - 1 crawler
 
-from src.webpages import visit_url, get_links_from_content
-from src.getters import get_not_reserved_page, finish_page
+from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content
+from src.getters import get_not_reserved_page, finish_page, cancel_all_sites_reservations, cancel_all_pages_reservations
 from src import db_manager
 from src import webdriver
 
@@ -27,6 +27,9 @@ def crawler_worker():
         # TODO: save from_to_links to DB
 
         # TODO: add links to pages in DB
+
+        images_urls = get_img_urls_from_content(parsed_content)
+
 
         # update page type and reservation
         finish_page(page)

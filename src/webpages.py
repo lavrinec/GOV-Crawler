@@ -8,11 +8,9 @@ def visit_url(url):
 
     # mark url as visited/processed in db
 
-    content = get_url_content("https://google.com")
-    # print(content)
+    content = get_url_content(url)
 
     parsed_content = BeautifulSoup(content, 'html.parser')
-    # print(parsed_content)
 
     # TODO: check for redirects
     # TODO-in-TODO: find out if better from original content or parsed content
@@ -31,11 +29,20 @@ def get_url_content(url):
 def get_links_from_content(parsed_content):
     print("get links from content")
 
-    a_links = parsed_content.find_all('a')
+    a_tags = parsed_content.find_all('a')
 
-    links = list(map(lambda link: link.get("href"), a_links ))  # array of urls
-    print(links)
+    a_urls = list(map(lambda link: link.get("href"), a_tags ))  # array of urls
+    print(a_urls)
 
-    return links
+    return a_urls
 
 
+def get_img_urls_from_content(parsed_content):
+    print("get img urls from content")
+
+    img_tags = parsed_content.find_all('img')
+
+    img_urls = list(map(lambda link: link.get("src"), img_tags ))  # array of urls
+    print(img_urls)
+
+    return img_urls
