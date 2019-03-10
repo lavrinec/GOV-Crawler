@@ -7,6 +7,8 @@ from sqlalchemy import and_, func, update
 from random import randint
 from datetime import datetime
 from src.webpages import visit_url
+from urllib.robotparser import RobotFileParser
+from urllib.parse import urlparse
 
 
 def get_frontier_from_db():
@@ -49,6 +51,9 @@ def get_site_robots(site):
     # TODO implement robots file reader
     robots = visit_url(site.domain + "robots.txt")
     print(robots)
+    base = get_base_url(site.domain)
+    # TODO
+    # add_rp(base, robots)
 
 
 def get_site_sitemap(site):
@@ -120,3 +125,32 @@ def cancel_all_sites_reservations():
 def cancel_all_pages_reservations():
     for page in db_manager.session.query(Page).order_by(Page.id):
         cancel_reservation(page)
+
+
+def get_site_robots_from_db(site):
+    return db_manager.session.query(Site.robots_content).filter(Site.domain.like("%" + site + "%")).one()
+
+
+def init():
+    global rps
+    rps = {}
+
+
+def get_base_url(url):
+    parsed_uri = urlparse(url)
+    return '//{uri.netloc}/'.format(uri=parsed_uri)
+
+
+def can_fetch(url) -> bool:
+    result = get_base_url(url)
+    if rps[result] is None:
+        robots = get_site_robots_from_db(result)
+        print(robots)
+        add_rp(result, robots)
+    print(result)
+    return rps[result].can_fetch("*", url)
+
+
+def add_rp(url, content):
+    rp = RobotFileParser()
+    rps[url] = rp.parse(content)
