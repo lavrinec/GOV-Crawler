@@ -21,8 +21,12 @@ def crawler_worker():
 
         # TODO get links [semi-done] and images and documents
 
-        links = get_links_from_content(parsed_content, page.url)  # array of arrays [from_url, to_url]
-        # TODO save links to DB
+        links = get_links_from_content(parsed_content)  # array of urls
+
+        from_to_links = list(map(lambda link: [page.url, link], links))
+        # TODO: save from_to_links to DB
+
+        # TODO: add links to pages in DB
 
         # update page type and reservation
         finish_page(page)

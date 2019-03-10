@@ -28,12 +28,12 @@ def get_url_content(url):
     return content
 
 
-def get_links_from_content(parsed_content, from_url):
+def get_links_from_content(parsed_content):
     print("get links from content")
 
     a_links = parsed_content.find_all('a')
 
-    links = list(map(lambda link: [from_url, link.get("href")], a_links ))  # array of arrays (from_url, to_url)
+    links = list(map(lambda link: link.get("href"), a_links ))  # array of urls
     print(links)
 
     return links
