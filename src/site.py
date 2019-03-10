@@ -10,8 +10,10 @@ class Site(Base):
     domain = Column(String(100))
     robots_content = Column(String(100))
     sitemap_content = Column(String(32))
+    reservation_id = Column(Integer)
 
     def __repr__(self):
-        return '<Page {0} {1}: {2}>'.format(self.domain,
-                                            self.robots_content,
-                                            self.sitemap_content)
+        return '<Site {0} {1}: {2} {3}>'.format(self.domain,
+                                                self.robots_content,
+                                                self.sitemap_content,
+                                                self.reservation_id)
