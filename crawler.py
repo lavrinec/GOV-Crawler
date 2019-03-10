@@ -26,4 +26,4 @@ if __name__ == "__main__":
     for p in processes:
         p.join()
 
-    print("crawler ended")
+    print("all workers ended")
