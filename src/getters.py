@@ -6,6 +6,7 @@ from src.site import Site
 from sqlalchemy import and_, func, update
 from random import randint
 from datetime import datetime
+from src.webpages import visit_url
 
 
 def get_frontier_from_db():
@@ -45,7 +46,9 @@ def get_not_reserved_page():
 
 
 def get_site_robots(site):
-    pass
+    # TODO implement robots file reader
+    robots = visit_url(site.domain + "robots.txt")
+    print(robots)
 
 
 def get_site_sitemap(site):
