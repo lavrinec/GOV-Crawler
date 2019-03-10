@@ -43,6 +43,27 @@ def get_not_reserved_page():
     return page
 
 
+def get_site_robots(site):
+    pass
+
+
+def get_site_sitemap(site):
+    pass
+
+
+def get_site_data(site):
+    get_site_robots(site)
+    get_site_sitemap(site)
+
+
+def get_new_site():
+    site = get_not_reserved_site()
+    if site is None:
+        return None
+    get_site_data(site)
+    return site
+
+
 def get_not_reserved(param, *restrictions):
     rand = randint(-9999999, 9999999)
 
