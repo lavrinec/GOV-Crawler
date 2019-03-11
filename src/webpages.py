@@ -9,28 +9,40 @@ def visit_url(url):
 
     # mark url as visited/processed in db
 
-    content = get_url_content(url)
-
-    parsed_content = BeautifulSoup(content, 'html.parser')
+    response = get_url_content(url)
 
     # TODO: check for redirects
     # TODO-in-TODO: find out if better from original content or parsed content
 
-    return parsed_content
+    return response
 
 
 def get_url_content(url):
     print("get content for", url)
 
     webdriver.browser.get(url)
-    har = json.loads(webdriver.browser.get_log('har')[0]['message'])
 
-    # prints status code and text
-    print(har['log']['entries'][0]['response']['status'])
-    print(har['log']['entries'][0]['response']['statusText'])
+    har = json.loads(webdriver.browser.get_log('har')[0]['message'])
+    response = har['log']['entries'][0]['response']
+
+    status_code = response['status']
+
+    if not status_code:  # if status_code == None
+        if "not found" in response['statusText'].lower():
+            status_code = 404
+        # other, e.q. 401, 402, 403, ...
+
+    content_type = list(filter(lambda x: x["name"] == "Content-Type", response['headers']))[0]["value"]
 
     content = webdriver.browser.page_source
-    return content
+    parsed_content = BeautifulSoup(content, 'html.parser')
+
+    return {
+        "status": status_code,
+        "content": parsed_content,
+        "content_type": content_type,
+        "actual_url": webdriver.browser.current_url
+    }
 
 
 def get_links_from_content(parsed_content):

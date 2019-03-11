@@ -8,7 +8,7 @@ from selenium import webdriver
 def init():
     global browser
     # browser = webdriver.Chrome(executable_path='./webdrivers/chromedriver-2-46', chrome_options=chrome_options)
-    browser = webdriver.PhantomJS(executable_path='./webdrivers/phantomjs')
+    browser = webdriver.PhantomJS(executable_path='./webdrivers/phantomjs', service_args=['--ignore-ssl-errors=true'])
 
 
 def close():

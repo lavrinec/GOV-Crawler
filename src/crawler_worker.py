@@ -19,19 +19,18 @@ def crawler_worker():
 
     page = get_not_reserved_page()
     while page is not None:
-        parsed_content = visit_url(page.url)
+        response = visit_url(page.url)
 
-        # TODO get links [semi-done] and images and documents
+        # TODO get links [semi-done] and images [semi-done] and documents
 
-        links = get_links_from_content(parsed_content)  # array of urls
+        links = get_links_from_content(response["content"])  # array of urls
 
         from_to_links = list(map(lambda link: [page.url, link], links))
         # TODO: save from_to_links to DB
-
         # TODO: add links to pages in DB
 
-        images_urls = get_img_urls_from_content(parsed_content)
-
+        images_urls = get_img_urls_from_content(response["content"])
+        # TODO: get imgs and save imgs to db
 
         # update page type and reservation
         finish_page(page)
