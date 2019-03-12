@@ -6,7 +6,7 @@ from src.site import Site
 from sqlalchemy import and_, func, update
 from random import randint
 from datetime import datetime
-from src.webpages import visit_url
+import requests
 from urllib.robotparser import RobotFileParser
 from urllib.parse import urlparse
 
@@ -48,12 +48,16 @@ def get_not_reserved_page():
 
 
 def get_site_robots(site):
-    # TODO implement robots file reader
-    robots = visit_url(site.domain + "robots.txt")
-    print(robots)
+    r = requests.get(site.domain + "robots.txt")
+    status = r.status_code
+    if status is not None and 200 <= status < 300:
+        content = r.text
+    else:
+        content = "Allow: /"
+    print(content)
+    site.robots_content = content
     base = get_base_url(site.domain)
-    # TODO
-    # add_rp(base, robots)
+    add_rp(base, content)
 
 
 def get_site_sitemap(site):

@@ -26,6 +26,8 @@ All further instructions are written with assumption that Python 3 is your defau
 
 - BeautifulSoup4: run `pip install bs4`
 
+- requests: run `pip install requests`
+
 In case of `EnvironmentError`, add `--user` at the end of `pip install <module>`
 
 
