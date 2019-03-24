@@ -1,11 +1,19 @@
 # savers
+from sqlalchemy import exc
+
+from src import db_manager
 
 
 def save_site_to_db():
     return True
 
 
-def save_page_to_db():
+def save_page_to_db(page):
+    try:
+        db_manager.session.add(page)
+        db_manager.session.commit()
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'save_page', page.url)
     return True
 
 

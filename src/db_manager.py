@@ -19,3 +19,9 @@ def connect_to_db():
 def init():
     global session
     session = connect_to_db()
+
+
+def handel_exception(e, rollback, where, second=None):
+    print('exception for ', where, second, str(e))
+    if rollback:
+        session.rollback()

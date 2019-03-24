@@ -1,14 +1,17 @@
 # getters for site, page, ...
+from bs4 import BeautifulSoup
 
 from src import db_manager
 from src.page import Page
+from src.savers import save_page_to_db
 from src.site import Site
-from sqlalchemy import and_, func, update
+from sqlalchemy import and_, func, update, exc
 from random import randint
 from datetime import datetime
 import requests
 from urllib.robotparser import RobotFileParser
 from urllib.parse import urlparse
+import re
 
 
 def get_frontier_from_db():
@@ -47,6 +50,16 @@ def get_not_reserved_page():
     return page
 
 
+def add_frontier(url):
+    if can_fetch(url):
+        print("Adding to frontier ", url)
+        frontier = Page(url=url, page_type_code='FRONTIER')
+        save_page_to_db(frontier)
+    else:
+        print("URL not allowed: ", url)
+    pass
+
+
 def get_site_robots(site):
     r = requests.get(site.domain + "robots.txt")
     status = r.status_code
@@ -58,21 +71,55 @@ def get_site_robots(site):
     site.robots_content = content
     base = get_base_url(site.domain)
     add_rp(base, content)
+    x = re.findall("^Sitemap:(.*)", content, re.MULTILINE)
+
+    if x:
+        print("YES! We have a sitemap match!", x)
+        for val in x:
+            get_site_sitemap(val.strip(), site)
+    else:
+        print("No sitemap match")
+        site.sitemap_content = "None"
 
 
-def get_site_sitemap(site):
-    pass
+def process_sitemap(xml):
+    soup = BeautifulSoup(xml)
+    sitemap_tags = soup.find_all("sitemap")
+    xml_dict = []
+
+    print("The number of sitemaps are {0}".format(len(sitemap_tags)))
+
+    for sitemap in sitemap_tags:
+        xml_dict[sitemap.findNext("loc").text] = sitemap.findNext("lastmod").text
+
+    print(xml_dict)
+
+
+def get_site_sitemap(url, site):
+    print("Sitemap za ", url)
+    r = requests.get(url)
+    status = r.status_code
+    if status is not None and 200 <= status < 300:
+        content = r.text
+    else:
+        content = "None"
+    print(content)
+    site.sitemap_content = content
+    process_sitemap(content)
 
 
 def get_site_data(site):
     get_site_robots(site)
-    get_site_sitemap(site)
+    # get_site_sitemap(site)
 
 
 def cancel_reservation(input):
-    input.reservation_id = None
-    input.reserved = None
-    db_manager.session.commit()
+    try:
+        input.reservation_id = None
+        input.reserved = None
+        db_manager.session.commit()
+    except exc.SQLAlchemyError as e:
+        print('exception for reservation ', str(e))
 
 
 def get_new_site():
@@ -82,6 +129,7 @@ def get_new_site():
     print("New site ", site.domain)
     get_site_data(site)
     cancel_reservation(site)
+    add_frontier(site.domain)
     return site
 
 
@@ -100,21 +148,21 @@ def get_not_reserved(param, *restrictions):
         .values({param.reservation_id: rand, param.reserved: timestamp}) \
         .where(param.id == sq.as_scalar())
 
-    # Execute update
-    db_manager.session.execute(q)
-    db_manager.session.commit()
-
     # return result
     try:
+        # Execute update
+        db_manager.session.execute(q)
+        db_manager.session.commit()
         return db_manager.session.query(param).filter(param.reservation_id == rand).one()
-    except:
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'get not reserved', rand)
         return None
 
 
 def finish_page(page):
     print("finish page")
     # TODO set page new page_type_code
-
+    page.page_type_code = 'HTML'
     cancel_reservation(page)
 
 
@@ -151,10 +199,16 @@ def can_fetch(url) -> bool:
         robots = get_site_robots_from_db(result)
         print(robots)
         add_rp(result, robots)
-    print(result)
-    return rps[result].can_fetch("*", url)
+    print(result, rps[result])
+    if rps[result] is None:
+        print("find out why is None")
+        return True
+    else:
+        return rps[result].can_fetch("*", url)
 
 
 def add_rp(url, content):
     rp = RobotFileParser()
+    print(rp, 'BBB', content, rp.parse(content))
     rps[url] = rp.parse(content)
+    print(url, rps[url], rp, 'AAA')
