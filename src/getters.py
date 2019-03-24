@@ -85,14 +85,19 @@ def get_site_robots(site):
 def process_sitemap(xml):
     soup = BeautifulSoup(xml)
     sitemap_tags = soup.find_all("sitemap")
+    url_tags = soup.find_all("url")
     xml_dict = []
 
-    print("The number of sitemaps are {0}".format(len(sitemap_tags)))
+    print("The number of sitemaps are {0} and {1}".format(len(sitemap_tags), len(url_tags)))
 
     for sitemap in sitemap_tags:
-        xml_dict[sitemap.findNext("loc").text] = sitemap.findNext("lastmod").text
+        xml_dict.append(sitemap.findNext("loc").text)
 
-    print(xml_dict)
+    for sitemap in url_tags:
+        xml_dict.append(sitemap.findNext("loc").text)
+
+    for page in xml_dict:
+        add_frontier(page)
 
 
 def get_site_sitemap(url, site):
@@ -103,6 +108,7 @@ def get_site_sitemap(url, site):
         content = r.text
     else:
         content = "None"
+    db_manager.session.commit()
     print(content)
     site.sitemap_content = content
     process_sitemap(content)
@@ -208,7 +214,6 @@ def can_fetch(url) -> bool:
 
 
 def add_rp(url, content):
+    # TODO fix
     rp = RobotFileParser()
-    print(rp, 'BBB', content, rp.parse(content))
     rps[url] = rp.parse(content)
-    print(url, rps[url], rp, 'AAA')
