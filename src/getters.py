@@ -165,10 +165,10 @@ def get_not_reserved(param, *restrictions):
         return None
 
 
-def finish_page(page):
+def finish_page(page, page_type='HTML'):
     print("finish page")
     # TODO set page new page_type_code
-    page.page_type_code = 'HTML'
+    page.page_type_code = page_type
     cancel_reservation(page)
 
 
