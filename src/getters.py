@@ -108,9 +108,9 @@ def get_site_sitemap(url, site):
         content = r.text
     else:
         content = "None"
-    db_manager.session.commit()
-    print(content)
+
     site.sitemap_content = content
+    cancel_reservation(site)
     process_sitemap(content)
 
 
@@ -208,7 +208,7 @@ def can_fetch(url) -> bool:
     print(result, rps[result])
     if rps[result] is None:
         print("find out why is None")
-        return True
+        return False
     else:
         return rps[result].can_fetch("*", url)
 
@@ -216,4 +216,5 @@ def can_fetch(url) -> bool:
 def add_rp(url, content):
     # TODO fix
     rp = RobotFileParser()
-    rps[url] = rp.parse(content)
+    rp.parse(content.splitlines())
+    rps[url] = rp
