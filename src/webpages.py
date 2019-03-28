@@ -46,6 +46,7 @@ def get_url_content(url):
 
 
 def get_links_from_content(parsed_content):
+    # TODO ckeck if corect link
     print("get links from content")
 
     a_tags = parsed_content.find_all('a')

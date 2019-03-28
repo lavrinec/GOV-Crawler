@@ -190,9 +190,9 @@ def cancel_all_pages_reservations():
         cancel_reservation(page)
 
 
-def get_site_robots_from_db(site):
+def get_site_from_db(site):
     try:
-        return db_manager.session.query(Site.robots_content).filter(Site.domain.like("%" + site + "%")).one()
+        return db_manager.session.query(Site).filter(Site.domain.like("%" + site + "%")).one()
     except exc.SQLAlchemyError as e:
         db_manager.handel_exception(e, True, 'get site robots', site)
         return None
@@ -216,15 +216,15 @@ def get_full_base_url(url):
 def can_fetch(url) -> bool:
     result = get_base_url(url)
     if rps[result] is None:
-        robots = get_site_robots_from_db(result)
-        if robots is None:
+        site = get_site_from_db(result)
+        if site is None:
             # TODO add site
             # add_site(get_full_base_url(url))
             return False
+        robots = site.robots_content
         if robots == "":
             # TODO visit site
             # visit_site_by_url(url)
-            # robots = get_site_robots_from_db(result)
             return False
         print(robots)
         add_rp(result, robots)
@@ -256,7 +256,6 @@ def get_page_from_url(link):
 
 
 def add_link_to_page(link, page):
-    # TODO ckeck if corect link
     print(link)
     if can_fetch(link):
         # TODO clean link for hashes etc
