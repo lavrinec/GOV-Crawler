@@ -17,6 +17,15 @@ def save_page_to_db(page):
     return True
 
 
+def save_link_to_db(link):
+    try:
+        db_manager.session.add(link)
+        db_manager.session.commit()
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'save_link', link.to_page)
+    return True
+
+
 ### saving documents
 
 def save_documents_to_db(doc_array, page_id):
@@ -41,4 +50,3 @@ def save_images_to_db(img_array, page_id):
 
 def save_image_to_db(url, page_id):
     return True
-

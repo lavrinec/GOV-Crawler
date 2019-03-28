@@ -2,8 +2,9 @@
 from bs4 import BeautifulSoup
 
 from src import db_manager
+from src.link import Link
 from src.page import Page
-from src.savers import save_page_to_db
+from src.savers import save_page_to_db, save_link_to_db
 from src.site import Site
 from sqlalchemy import and_, func, update, exc
 from random import randint
@@ -50,11 +51,15 @@ def get_not_reserved_page():
     return page
 
 
+def add_frontier_url(url):
+    print("Adding to frontier ", url)
+    frontier = Page(url=url, page_type_code='FRONTIER')
+    save_page_to_db(frontier)
+
+
 def add_frontier(url):
     if can_fetch(url):
-        print("Adding to frontier ", url)
-        frontier = Page(url=url, page_type_code='FRONTIER')
-        save_page_to_db(frontier)
+        add_frontier_url(url)
     else:
         print("URL not allowed: ", url)
     pass
@@ -186,7 +191,11 @@ def cancel_all_pages_reservations():
 
 
 def get_site_robots_from_db(site):
-    return db_manager.session.query(Site.robots_content).filter(Site.domain.like("%" + site + "%")).one()
+    try:
+        return db_manager.session.query(Site.robots_content).filter(Site.domain.like("%" + site + "%")).one()
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'get site robots', site)
+        return None
 
 
 def init():
@@ -199,10 +208,24 @@ def get_base_url(url):
     return '//{uri.netloc}/'.format(uri=parsed_uri)
 
 
+def get_full_base_url(url):
+    parsed_uri = urlparse(url)
+    return '{uri.scheme}//{uri.netloc}/'.format(uri=parsed_uri)
+
+
 def can_fetch(url) -> bool:
     result = get_base_url(url)
     if rps[result] is None:
         robots = get_site_robots_from_db(result)
+        if robots is None:
+            # TODO add site
+            # add_site(get_full_base_url(url))
+            return False
+        if robots == "":
+            # TODO visit site
+            # visit_site_by_url(url)
+            # robots = get_site_robots_from_db(result)
+            return False
         print(robots)
         add_rp(result, robots)
     print(result, rps[result])
@@ -214,7 +237,29 @@ def can_fetch(url) -> bool:
 
 
 def add_rp(url, content):
-    # TODO fix
     rp = RobotFileParser()
     rp.parse(content.splitlines())
     rps[url] = rp
+
+
+def get_page_from_db_by_url(link):
+    try:
+        return db_manager.session.query(Page).filter(Page.url == link).one()
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'get page by url', link)
+        return None
+
+
+def get_page_from_url(link):
+    add_frontier_url(link)
+    return get_page_from_db_by_url(link)
+
+
+def add_link_to_page(link, page):
+    # TODO ckeck if corect link
+    print(link)
+    if can_fetch(link):
+        # TODO clean link for hashes etc
+        connected = get_page_from_url(link)
+        link = Link(from_page=page.id, to_page=connected.id)
+        save_link_to_db(link)
