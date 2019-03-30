@@ -6,8 +6,13 @@ from bs4 import BeautifulSoup
 def main():
     webdriver.init()
     # cnt = await visit_url("http://evem.gov.si/robots.txt")
-    cnt = visit_url("https://www.google.si")
-    print("cnt", cnt)
+    response_obj = visit_url("http://podatki.gov.si/")
+    print("res", response_obj["status"], response_obj["actual_url"])
+
+    actual_url = response_obj["actual_url"]
+
+    links = get_links_from_content(actual_url, response_obj["content"])
+
     webdriver.close()
 
 
