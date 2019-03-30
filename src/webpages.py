@@ -50,12 +50,15 @@ def get_url_content(url):
 
 def check_a_url(a_tag, base_url, domain):
     url = a_tag.get("href")
-    print('url', url)
 
     if not url:
         # just to prevent errors
         return None
 
+    return check_any_url(url, base_url, domain)
+
+
+def check_any_url(url, base_url, domain):
     if url.startswith('https://') or url.startswith('http://') or url.startswith('ftp://'):
         # url is absolute path
         return url
@@ -82,18 +85,21 @@ def check_a_url(a_tag, base_url, domain):
 
 
 def check_onclick_url(onclick_tag, base_url, domain):
-    onclick_code = onclick_tag.get("onclick")
-    print("code", onclick_code)
+    onclick_code = onclick_tag.get("onclick").replace(" ", "").replace("\'", "\"")
 
-    if 'location.href=' in onclick_code or 'location=' in onclick_code:
-        re_match = re.search("location\.href\s*=\s*(\'|\").*(\'|\")", onclick_code)
-        if not re_match:
-            re_match = re.search("location\s*=\s*(\'|\").*(\'|\")", onclick_code)
+    if 'location.href=' in onclick_code:
+        re_match = re.search("location\.href=\".*\"", onclick_code)
+        # get the url from match
+        url = re_match.group().replace("location.href=", "").replace("\"", "")
+        return check_any_url(url, base_url, domain)
 
-        substr = re_match.group()
-        # get the url from substr
-        return "test"
+    if 'location=' in onclick_code:
+        re_match = re.search("location=\".*\"", onclick_code)
+        # get the url from match
+        url = re_match.group().replace("location=", "").replace("\"", "")
+        return check_any_url(url, base_url, domain)
 
+    # TODO:
     #  'location.replace(' in line
     #  'location.assign(' in line
     #  'window.open(' in line
@@ -111,18 +117,18 @@ def get_links_from_content(base_url, parsed_content):
 
     base_url_split = base_url.split("/")
     domain = "/".join(base_url_split[:3])
-    print("dom", domain, base_url_split)
 
-    a_tags = parsed_content.find_all('a', href=True)  # array of <a> tags
-    a_urls = list(map(lambda a_tag: check_a_url(a_tag, base_url, domain), a_tags))  # array of urls from <a> tags
-    print("a_urls", a_urls)
+    a_tags = parsed_content.find_all('a', href=True)
+    a_urls = list(map(lambda a_tag: check_a_url(a_tag, base_url, domain), a_tags))
 
     # case sensitive - onclick !== onClick, but we don't check onClick as it's not a standard
     tags_onclick = parsed_content.find_all(onclick=True)
     onclick_urls = list(map(lambda onclick_tag: check_onclick_url(onclick_tag, base_url, domain), tags_onclick))
-    print("onclick_urls", onclick_urls)
 
-    return None
+    all_urls = a_urls + onclick_urls
+    all_urls = list(filter(None, all_urls))
+
+    return all_urls
 
 
 def get_img_urls_from_content(parsed_content):
