@@ -2,7 +2,7 @@
 from src import webdriver
 from bs4 import BeautifulSoup
 import json
-
+import re
 
 def visit_url(url):
     print("visit url", url)
@@ -78,8 +78,27 @@ def check_a_url(a_tag, base_url, domain):
     # if absolute path, add base url
     if not base_url.endswith('/'):
         base_url += '/'
-
     return base_url + url
+
+
+def check_onclick_url(onclick_tag, base_url, domain):
+    onclick_code = onclick_tag.get("onclick")
+    print("code", onclick_code)
+
+    if 'location.href=' in onclick_code or 'location=' in onclick_code:
+        re_match = re.search("location\.href\s*=\s*(\'|\").*(\'|\")", onclick_code)
+        if not re_match:
+            re_match = re.search("location\s*=\s*(\'|\").*(\'|\")", onclick_code)
+
+        substr = re_match.group()
+        # get the url from substr
+        return "test"
+
+    #  'location.replace(' in line
+    #  'location.assign(' in line
+    #  'window.open(' in line
+    #  'parent.open(' in line
+    return None
 
 
 def get_links_from_content(base_url, parsed_content):
@@ -90,21 +109,18 @@ def get_links_from_content(base_url, parsed_content):
     if base_tag:
         base_url = base_tag.get("href")
 
-    base_url_split = base_url.split()
+    base_url_split = base_url.split("/")
     domain = "/".join(base_url_split[:3])
-
-    print("dom", domain)
+    print("dom", domain, base_url_split)
 
     a_tags = parsed_content.find_all('a', href=True)  # array of <a> tags
-    # a_urls = list(map(check_a_url, a_tags ))  # array of urls from <a> tags
     a_urls = list(map(lambda a_tag: check_a_url(a_tag, base_url, domain), a_tags))  # array of urls from <a> tags
-    print(a_urls)
+    print("a_urls", a_urls)
 
-    tags_with_onclick = parsed_content.find_all(onclick=True)
-    print(tags_with_onclick)
-
-    tags_with_on_big_c_lick = parsed_content.find_all(onClick=True)
-    print(tags_with_on_big_c_lick)
+    # case sensitive - onclick !== onClick, but we don't check onClick as it's not a standard
+    tags_onclick = parsed_content.find_all(onclick=True)
+    onclick_urls = list(map(lambda onclick_tag: check_onclick_url(onclick_tag, base_url, domain), tags_onclick))
+    print("onclick_urls", onclick_urls)
 
     return None
 
@@ -115,6 +131,6 @@ def get_img_urls_from_content(parsed_content):
     img_tags = parsed_content.find_all('img')
 
     img_urls = list(map(lambda link: link.get("src"), img_tags ))  # array of urls
-    print(img_urls)
+    print("img_urls", img_urls)
 
     return img_urls
