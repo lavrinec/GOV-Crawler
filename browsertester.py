@@ -25,7 +25,7 @@ def main():
         pass
 
     response_obj = visit_url(url)
-    print("res", response_obj["status"], response_obj["actual_url"])
+    print("res", response_obj)
 
     actual_url = response_obj["actual_url"]
 

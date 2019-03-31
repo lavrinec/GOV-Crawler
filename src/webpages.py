@@ -41,11 +41,16 @@ def get_url_content(url):
 
     print("content returned ", status_code)
 
+    redirected_from = None
+    if not url is webdriver.browser.current_url:
+        redirected_from = url
+
     return {
         "status": status_code,
         "content": parsed_content,
         "content_type": content_type,
-        "actual_url": webdriver.browser.current_url
+        "actual_url": webdriver.browser.current_url,
+        "redirected_from": redirected_from
     }
 
 

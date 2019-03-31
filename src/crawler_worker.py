@@ -42,6 +42,7 @@ def crawler_worker():
         else:
             # if url is a web page
             response = visit_url(page.url)
+            # response = {status, content, content_type, actual_url, redirected_from}
 
             # get links on current page
             links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
