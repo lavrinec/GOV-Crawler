@@ -22,14 +22,14 @@ def crawler_worker():
     while page is not None:
         response = visit_url(page.url)
 
-        # TODO get links [semi-done] and images [semi-done] and documents
+        # TODO get images [semi-done] and documents
 
         links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
 
         for link in links:
             add_link_to_page(link, page)
 
-        images_urls = get_img_urls_from_content(response["content"])
+        images_urls = get_img_urls_from_content(response["actual_url"], response["content"])
         # TODO: get imgs and save imgs to db
 
         # update page type and reservation
