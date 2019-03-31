@@ -3,6 +3,10 @@ from src import webdriver
 from bs4 import BeautifulSoup
 import json
 import re
+import requests
+import shutil
+import magic
+
 
 def visit_url(url):
     print("visit url", url)
@@ -163,3 +167,13 @@ def get_img_urls_from_content(base_url, parsed_content):
     img_urls = list(filter(None, img_urls))
 
     return img_urls
+
+
+def get_binary_data(url):
+    r = requests.get(url, stream=True)
+
+    split_url = url.split("/")
+    name = split_url[-1]
+    content_type = r.headers['Content-Type']
+
+    return {"name": name, "content_type": content_type, "data": r.raw}

@@ -1,5 +1,5 @@
 from src import webdriver
-from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content
+from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content, get_binary_data
 from bs4 import BeautifulSoup
 
 
@@ -17,6 +17,10 @@ def main():
 
     img_urls = get_img_urls_from_content(actual_url, response_obj["content"])
     print("img urls", img_urls)
+
+    for img_url in img_urls:
+        bin_data = get_binary_data(img_url)
+        print("data", bin_data)
 
     webdriver.close()
 
