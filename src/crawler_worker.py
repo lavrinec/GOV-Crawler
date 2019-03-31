@@ -1,6 +1,6 @@
 # crawler worker - 1 crawler
 
-from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content
+from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content, get_binary_data
 from src.getters import get_not_reserved_page, finish_page, cancel_all_sites_reservations, \
     cancel_all_pages_reservations, add_link_to_page
 from src import getters
@@ -31,6 +31,8 @@ def crawler_worker():
 
         images_urls = get_img_urls_from_content(response["actual_url"], response["content"])
         # TODO: get imgs and save imgs to db
+        # for loop through image_url and call bin_data = get_binary_data(img_url)
+        # the result for each is {name, data, content_type}
 
         # update page type and reservation
         finish_page(page)
