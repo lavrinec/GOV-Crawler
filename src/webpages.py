@@ -76,7 +76,7 @@ def check_any_url(url, base_url, domain):
         return None
 
     if url.startswith('../'):
-        # if url is abs. path and aims to parent folders
+        # if url is relative path and aims to parent folders
         split_url = url.split("/")
         num_of_slashes_to_root = split_url.count("..") + 1
         split_base_url = base_url.split("/")
