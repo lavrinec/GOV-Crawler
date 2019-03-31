@@ -1,4 +1,6 @@
 # crawler worker - 1 crawler
+import datetime
+
 from src.page_data import PageData
 from src.savers import save_page_data_to_db
 from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content, get_binary_data
@@ -54,6 +56,9 @@ def crawler_worker():
                 connect_image_with_page(page.id, img_url, get_binary_data)
 
             # update page type and reservation
+            page.html_content = str(response["content"])
+            page.http_status_code = response["status"]
+            page.accessed_time = datetime.datetime.now()
             finish_page(page, page_type="HTML")
 
         page = get_not_reserved_page()
