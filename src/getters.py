@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from src import db_manager
 from src.link import Link
 from src.page import Page
-from src.savers import save_page_to_db, save_link_to_db
+from src.savers import save_page_to_db, save_link_to_db, save_site_to_db
 from src.site import Site
 from sqlalchemy import and_, func, update, exc
 from random import randint
@@ -16,10 +16,6 @@ import re
 
 
 def get_frontier_from_db():
-    return True
-
-
-def get_site_from_db():
     return True
 
 
@@ -51,9 +47,26 @@ def get_not_reserved_page():
     return page
 
 
+def set_site_id(base, id):
+    site_ids[base] = id
+    return id
+
+
+def get_site_id_for_url(url):
+    base = get_base_url(url)
+    # TODO fix KeyError
+    site_id = site_ids.get(base, None)
+    if site_id is None:
+        site = get_site_from_db(base)
+        return set_site_id(base, site.id)
+    else:
+        return site_id
+
+
 def add_frontier_url(url):
     print("Adding to frontier ", url)
-    frontier = Page(url=url, page_type_code='FRONTIER')
+    site_id = get_site_id_for_url(url)
+    frontier = Page(url=url, site_id=site_id, page_type_code='FRONTIER')
     save_page_to_db(frontier)
 
 
@@ -138,6 +151,7 @@ def get_new_site():
     if site is None:
         return None
     print("New site ", site.domain)
+    set_site_id(get_base_url(site.domain), site.id)
     get_site_data(site)
     cancel_reservation(site)
     add_frontier(site.domain)
@@ -200,7 +214,9 @@ def get_site_from_db(site):
 
 def init():
     global rps
+    global site_ids
     rps = {}
+    site_ids = {}
 
 
 def get_base_url(url):
@@ -213,33 +229,56 @@ def get_full_base_url(url):
     return '{uri.scheme}//{uri.netloc}/'.format(uri=parsed_uri)
 
 
-def can_fetch(url) -> bool:
-    result = get_base_url(url)
-    if rps[result] is None:
+def add_site(url, base):
+    print("Adding to sites ", url)
+    site = Site(domain=url)
+    save_site_to_db(site)
+    return get_site_from_db(base)
+
+
+def process_fetch_result(result, url, first_time):
+    robots_check = rps.get(result, None)
+    if robots_check is None:
         site = get_site_from_db(result)
         if site is None:
-            # TODO add site
-            # add_site(get_full_base_url(url))
+            print("Currently skipping site ", result)
+            # TODO uncoment when needing all sites from .gov.si
+            # site = add_site(get_full_base_url(url), result)
             return False
+        else:
+            set_site_id(result, site.id)
         robots = site.robots_content
         if robots == "":
-            # TODO visit site
-            # visit_site_by_url(url)
-            return False
-        print(robots)
-        add_rp(result, robots)
-    print(result, rps[result])
-    if rps[result] is None:
+            print("first time robots for domain ", result)
+            if first_time:
+                get_site_data(site)
+                return process_fetch_result(result, url, False)
+            else:
+                return False
+        print("Saving inner robots", robots)
+        robots_check = add_rp(result, robots)
+    if robots_check is None:
         print("find out why is None")
         return False
     else:
-        return rps[result].can_fetch("*", url)
+        can = robots_check.can_fetch("*", url)
+        print("results for site ", result, url, can)
+        return can
+
+
+def can_fetch(url) -> bool:
+    result = get_base_url(url)
+    if ".gov.si" not in result:
+        print("ni v gov.si", result)
+        return False
+    return process_fetch_result(result, url, True)
 
 
 def add_rp(url, content):
     rp = RobotFileParser()
     rp.parse(content.splitlines())
     rps[url] = rp
+    return rp
 
 
 def get_page_from_db_by_url(link):

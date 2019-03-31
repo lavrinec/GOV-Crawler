@@ -24,7 +24,7 @@ def crawler_worker():
 
         # TODO get links [semi-done] and images [semi-done] and documents
 
-        links = get_links_from_content(response["content"])  # array of urls
+        links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
 
         for link in links:
             add_link_to_page(link, page)

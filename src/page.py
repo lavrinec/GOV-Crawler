@@ -8,6 +8,7 @@ class Page(Base):
     # Base.metadata.schema = 'crawldb';
     __tablename__ = 'page'
     id = Column(Integer, primary_key=True)
+    site_id = Column(Integer)
     page_type_code = Column(String(100))
     url = Column(String(3000))
     html_content = Column(Text)

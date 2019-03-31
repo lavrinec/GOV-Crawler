@@ -37,6 +37,8 @@ def get_url_content(url):
     content = webdriver.browser.page_source
     parsed_content = BeautifulSoup(content, 'html.parser')
 
+    print("content returned ", status_code)
+
     return {
         "status": status_code,
         "content": parsed_content,
