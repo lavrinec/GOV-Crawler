@@ -25,14 +25,16 @@ def crawler_worker():
         page_name = split_url[-1]
         split_page_name = page_name.split(".")
 
-        allowed_binary_docs = ["pdf", "doc", "docx", "ppt", "pptx"]
+        allowed_binary_docs = ["PDF", "DOC", "DOCX", "PPT", "PPTX"]
 
-        if len(split_page_name) >= 2 and split_page_name[-1] in allowed_binary_docs:
+        extension = str.upper(split_page_name[-1])
+
+        if len(split_page_name) >= 2 and extension in allowed_binary_docs:
             # if the ending is pdf, doc, ...
 
             response = get_binary_data(page.url)
             # response = {name, data, content_type}
-            page_data = PageData(page_id=page.id, data_type_code=response["content_type"], data=response["data"])
+            page_data = PageData(page_id=page.id, data_type_code=extension, data=response["data"])
             save_page_data_to_db(page_data)
             # update page type and reservation
             finish_page(page, page_type="BINARY")
