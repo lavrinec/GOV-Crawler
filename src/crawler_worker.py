@@ -1,5 +1,6 @@
 # crawler worker - 1 crawler
-
+from src.page_data import PageData
+from src.savers import save_page_data_to_db
 from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content, get_binary_data
 from src.getters import get_not_reserved_page, finish_page, cancel_all_sites_reservations, \
     cancel_all_pages_reservations, add_link_to_page, connect_image_with_page
@@ -31,8 +32,8 @@ def crawler_worker():
 
             response = get_binary_data(page.url)
             # response = {name, data, content_type}
-            # TODO: save to DB
-
+            page_data = PageData(page_id=page.id, data_type_code=response["content_type"], data=response["data"])
+            save_page_data_to_db(page_data)
             # update page type and reservation
             finish_page(page, page_type="BINARY")
 

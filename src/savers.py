@@ -49,6 +49,15 @@ def save_page_image_to_db(page_image):
     return True
 
 
+def save_page_data_to_db(page_data):
+    try:
+        db_manager.session.add(page_data)
+        db_manager.session.commit()
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'save_page_data', page_image.image_id)
+    return True
+
+
 ### saving documents
 
 def save_documents_to_db(doc_array, page_id):
