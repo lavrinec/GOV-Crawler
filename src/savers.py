@@ -54,7 +54,7 @@ def save_page_data_to_db(page_data):
         db_manager.session.add(page_data)
         db_manager.session.commit()
     except exc.SQLAlchemyError as e:
-        db_manager.handel_exception(e, True, 'save_page_data', page_image.image_id)
+        db_manager.handel_exception(e, True, 'save_page_data', page_data.page_id)
     return True
 
 
