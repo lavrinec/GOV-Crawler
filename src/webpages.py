@@ -115,6 +115,16 @@ def check_onclick_url(onclick_tag, base_url, domain):
     return None
 
 
+def check_img_url(img_tag, base_url, domain):
+    url = img_tag.get("src")
+
+    if not url or url.startswith("data:"):
+        # just to prevent errors
+        return None
+
+    return check_any_url(url, base_url, domain)
+
+
 def get_links_from_content(base_url, parsed_content):
     print("get links from content")
 
@@ -141,9 +151,15 @@ def get_links_from_content(base_url, parsed_content):
 def get_img_urls_from_content(base_url, parsed_content):
     print("get img urls from content")
 
-    img_tags = parsed_content.find_all('img')
+    base_tag = parsed_content.find('base')
+    if base_tag:
+        base_url = base_tag.get("href")
 
-    img_urls = list(map(lambda link: link.get("src"), img_tags ))  # array of urls
-    print("img_urls", img_urls)
+    base_url_split = base_url.split("/")
+    domain = "/".join(base_url_split[:3])
+
+    img_tags = parsed_content.find_all('img', src=True)
+    img_urls = list(map(lambda img_tag: check_img_url(img_tag, base_url, domain), img_tags))  # array of urls
+    img_urls = list(filter(None, img_urls))
 
     return img_urls
