@@ -8,7 +8,8 @@ def main():
     # cnt = await visit_url("http://evem.gov.si/robots.txt")
     # response_obj = visit_url("http://evem.gov.si/")
     # response_obj = visit_url("https://www.ajpes.si/Registri/Poslovni_register/Splosno")
-    url = "https://www.ajpes.si/Doc/Registri/PRS/Shema_PRS.pdf"
+    # url = "https://www.ajpes.si/Doc/Registri/PRS/Shema_PRS.pdf"
+    url = "http://evem.gov.si/"
 
     split_url = url.split("/")
     page_name = split_url[-1]

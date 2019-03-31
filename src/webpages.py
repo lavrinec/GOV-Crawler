@@ -4,7 +4,8 @@ from bs4 import BeautifulSoup
 import json
 import re
 import requests
-
+from io import BytesIO
+from PIL import Image
 
 def visit_url(url):
     print("visit url", url)
@@ -174,4 +175,13 @@ def get_binary_data(url):
     name = split_url[-1]
     content_type = r.headers['Content-Type']
 
-    return {"name": name, "content_type": content_type, "data": r.raw}
+    # test which works
+    # raw = r.raw  # ne dela
+    content = r.content
+    # kvazi_bin = BytesIO(r.content) # se ni testiran
+    # i = Image.open(BytesIO(r.content)) # se ni testiran
+
+    # or use shutils somehow
+    # https://stackoverflow.com/a/13137873
+
+    return {"name": name, "content_type": content_type, "data": content}
