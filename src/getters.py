@@ -336,11 +336,11 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
 
         # TODO check if data is saved properly
         # Image object should be
-        #   file_name = image_data["name"]
+        #   filename = image_data["name"]
         #   content_type = image_data["content_type"]
         #   data = image_data["data"]
 
-        img = Image(url=image_url, file_name=image_data["name"], content_type=image_data["content_type"],
+        img = Image(url=image_url, filename=image_data["name"], content_type=image_data["content_type"],
                     data=image_data["data"])
         save_image_to_db(img)
         image = get_image_from_db_by_url(image_url)
