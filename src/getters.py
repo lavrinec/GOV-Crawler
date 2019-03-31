@@ -327,13 +327,13 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
         image_data = get_binary_data(image_url)
         # image_data = {name, data, content_type}
 
-        # TODO save data properly
+        # TODO check if data is saved properly
         # Image object should be
         #   file_name = image_data["name"]
         #   content_type = image_data["content_type"]
         #   data = image_data["data"]
 
-        img = Image(url=image_url)
+        img = Image(url=image_url, file_name=image_data["name"], content_type=image_data["content_type"], data=image_data["data"])
         save_image_to_db(img)
         image = get_image_from_db_by_url(image_url)
     add_page_image(image.id, page_id)
