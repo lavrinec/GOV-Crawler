@@ -2,9 +2,11 @@
 from bs4 import BeautifulSoup
 
 from src import db_manager
+from src.image import Image
 from src.link import Link
 from src.page import Page
-from src.savers import save_page_to_db, save_link_to_db, save_site_to_db
+from src.page_image import PageImage
+from src.savers import save_page_to_db, save_link_to_db, save_site_to_db, save_page_image_to_db, save_image_to_db
 from src.site import Site
 from sqlalchemy import and_, func, update, exc
 from random import randint
@@ -54,7 +56,6 @@ def set_site_id(base, id):
 
 def get_site_id_for_url(url):
     base = get_base_url(url)
-    # TODO fix KeyError
     site_id = site_ids.get(base, None)
     if site_id is None:
         site = get_site_from_db(base)
@@ -289,6 +290,14 @@ def get_page_from_db_by_url(link):
         return None
 
 
+def get_image_from_db_by_url(link):
+    try:
+        return db_manager.session.query(Image).filter(Image.url == link).one()
+    except exc.SQLAlchemyError as e:
+        db_manager.handel_exception(e, True, 'get image by url', link)
+        return None
+
+
 def get_page_from_url(link):
     add_frontier_url(link)
     return get_page_from_db_by_url(link)
@@ -301,3 +310,21 @@ def add_link_to_page(link, page):
         connected = get_page_from_url(link)
         link = Link(from_page=page.id, to_page=connected.id)
         save_link_to_db(link)
+
+
+def add_page_image(image_id, page_id):
+    page_image = PageImage(page_id=page_id, image_id=image_id)
+    save_page_image_to_db(page_image)
+
+
+def connect_image_with_page(page_id, image_url):
+    if ".gov.si" not in image_url:
+        print("image is not inside gov.si", image_url)
+        return False
+    image = get_image_from_db_by_url(image_url)
+    if image is None:
+        # TODO get image datas and save it
+        img = Image(url=image_url)
+        save_image_to_db(img)
+        image = get_image_from_db_by_url(image_url)
+    add_page_image(image.id, page_id)
