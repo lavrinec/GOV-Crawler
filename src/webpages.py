@@ -12,7 +12,6 @@ def visit_url(url):
     response = get_url_content(url)
 
     # TODO: check for redirects
-    # TODO-in-TODO: find out if better from original content or parsed content
 
     return response
 
@@ -47,9 +46,6 @@ def get_url_content(url):
     }
 
 
-# podatki.gov.si
-# <a class="view_mode view_lower active" view_mode="view_upper">Male</a>
-
 def check_a_url(a_tag, base_url, domain):
     url = a_tag.get("href")
 
@@ -78,6 +74,16 @@ def check_any_url(url, base_url, domain):
     if url.startswith('mailto:') or url.startswith('javascript:'):
         # mailto: or javascript: => skip
         return None
+
+    if url.startswith('../'):
+        # if url is abs. path and aims to parent folders
+        split_url = url.split("/")
+        num_of_slashes_to_root = split_url.count("..") + 1
+        split_base_url = base_url.split("/")
+        tmp_base_url_root = "/".join(split_base_url[:-num_of_slashes_to_root])
+        if not tmp_base_url_root.endswith('/'):
+            tmp_base_url_root += '/'
+        return tmp_base_url_root + "/".join(split_url[split_url.count(".."):])
 
     # otherwise, url is absolute address
     # if absolute path, add base url
@@ -110,7 +116,6 @@ def check_onclick_url(onclick_tag, base_url, domain):
 
 
 def get_links_from_content(base_url, parsed_content):
-    # TODO check if correct link
     print("get links from content")
 
     base_tag = parsed_content.find('base')
@@ -133,7 +138,7 @@ def get_links_from_content(base_url, parsed_content):
     return all_urls
 
 
-def get_img_urls_from_content(parsed_content):
+def get_img_urls_from_content(base_url, parsed_content):
     print("get img urls from content")
 
     img_tags = parsed_content.find_all('img')
