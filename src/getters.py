@@ -307,6 +307,14 @@ def add_link_to_page(link, page):
     print(link)
     if can_fetch(link):
         # TODO clean link for hashes etc
+
+        split_by_query = link.split("?")
+        if len(split_by_query) == 2:
+            query_params = split_by_query[-1].split("&")
+            query_params.sort()
+            sorted_params = "&".join(query_params)
+            link = split_by_query[0] + sorted_params
+
         connected = get_page_from_url(link)
         link = Link(from_page=page.id, to_page=connected.id)
         save_link_to_db(link)
