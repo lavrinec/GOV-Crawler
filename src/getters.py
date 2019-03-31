@@ -292,7 +292,7 @@ def get_page_from_db_by_url(link):
 
 def get_image_from_db_by_url(link):
     try:
-        return db_manager.session.query(Image).filter(Image.url == link).one()
+        return db_manager.session.query(Image.id).filter(Image.url == link).one()
     except exc.SQLAlchemyError as e:
         db_manager.handel_exception(e, True, 'get image by url', link)
         return None
@@ -329,8 +329,8 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
     if ".gov.si" not in image_url:
         print("image is not inside gov.si", image_url)
         return False
-    image = get_image_from_db_by_url(image_url)
-    if image is None:
+    image_id = get_image_from_db_by_url(image_url)
+    if image_id is None:
         image_data = get_binary_data(image_url)
         # image_data = {name, data, content_type}
 
@@ -343,5 +343,5 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
         img = Image(url=image_url, filename=image_data["name"], content_type=image_data["content_type"],
                     data=image_data["data"])
         save_image_to_db(img)
-        image = get_image_from_db_by_url(image_url)
-    add_page_image(image.id, page_id)
+        image_id = get_image_from_db_by_url(image_url)
+    add_page_image(image_id, page_id)
