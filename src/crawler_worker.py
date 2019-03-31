@@ -2,7 +2,7 @@
 
 from src.webpages import visit_url, get_links_from_content, get_img_urls_from_content, get_binary_data
 from src.getters import get_not_reserved_page, finish_page, cancel_all_sites_reservations, \
-    cancel_all_pages_reservations, add_link_to_page
+    cancel_all_pages_reservations, add_link_to_page, connect_image_with_page
 from src import getters
 from src import db_manager
 from src import webdriver
@@ -47,6 +47,12 @@ def crawler_worker():
             # TODO: get imgs and save imgs to db
             # for loop through image_url and call bin_data = get_binary_data(img_url)
             # the result for each is {name, data, content_type}
+            for img_url in images_urls:
+                connect_image_with_page(page.id, img_url, get_binary_data)
+
+
+
+            connect_image_with_page
 
             # update page type and reservation
             finish_page(page, page_type="HTML")

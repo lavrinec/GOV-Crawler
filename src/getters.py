@@ -317,13 +317,22 @@ def add_page_image(image_id, page_id):
     save_page_image_to_db(page_image)
 
 
-def connect_image_with_page(page_id, image_url):
+def connect_image_with_page(page_id, image_url, get_binary_data):
     if ".gov.si" not in image_url:
         print("image is not inside gov.si", image_url)
         return False
     image = get_image_from_db_by_url(image_url)
     if image is None:
-        # TODO get image datas and save it
+
+        image_data = get_binary_data(image_url)
+        # image_data = {name, data, content_type}
+
+        # TODO save data properly
+        # Image object should be
+        #   file_name = image_data["name"]
+        #   content_type = image_data["content_type"]
+        #   data = image_data["data"]
+
         img = Image(url=image_url)
         save_image_to_db(img)
         image = get_image_from_db_by_url(image_url)
