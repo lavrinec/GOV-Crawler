@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Text
+from sqlalchemy import Column, Integer, String, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -9,7 +9,7 @@ class PageData(Base):
     id = Column(Integer, primary_key=True)
     page_id = Column(Integer)
     data_type_code = Column(String(100))
-    data = Column(Text)
+    data = Column(LargeBinary)
 
     def __repr__(self):
         return '<Page {0} {1}: {2}>'.format(self.page_id,

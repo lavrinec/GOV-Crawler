@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP, Text
+from sqlalchemy import Column, Integer, String, TIMESTAMP, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -9,7 +9,7 @@ class Image(Base):
     id = Column(Integer, primary_key=True)
     filename = Column(String(255))
     content_type = Column(String(50))
-    data = Column(Text)
+    data = Column(LargeBinary)
     accessed_time = Column(TIMESTAMP)
     url = Column(String(3000))
 
