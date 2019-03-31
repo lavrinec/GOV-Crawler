@@ -20,22 +20,36 @@ def crawler_worker():
 
     page = get_not_reserved_page()
     while page is not None:
-        response = visit_url(page.url)
+        split_url = page.url.split("/")
+        page_name = split_url[-1]
+        split_page_name = page_name.split(".")
 
-        # TODO get images [semi-done] and documents
+        allowed_binary_docs = ["pdf", "doc", "docx", "ppt", "pptx"]
 
-        links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
+        if len(split_page_name) >= 2 and split_page_name[-1] in allowed_binary_docs:
+            print("pg name", page_name)
 
-        for link in links:
-            add_link_to_page(link, page)
+            response = get_binary_data(page.url)
+            # response = {name, data, content_type}
+            # TODO: save to DB
 
-        images_urls = get_img_urls_from_content(response["actual_url"], response["content"])
-        # TODO: get imgs and save imgs to db
-        # for loop through image_url and call bin_data = get_binary_data(img_url)
-        # the result for each is {name, data, content_type}
+            # update page type and reservation
+            finish_page(page, page_type="BINARY")
 
-        # update page type and reservation
-        finish_page(page)
+        else:
+            response = visit_url(page.url)
+
+            links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
+            for link in links:
+                add_link_to_page(link, page)
+
+            images_urls = get_img_urls_from_content(response["actual_url"], response["content"])
+            # TODO: get imgs and save imgs to db
+            # for loop through image_url and call bin_data = get_binary_data(img_url)
+            # the result for each is {name, data, content_type}
+
+            # update page type and reservation
+            finish_page(page, page_type="HTML")
 
         page = get_not_reserved_page()
 

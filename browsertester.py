@@ -6,8 +6,24 @@ from bs4 import BeautifulSoup
 def main():
     webdriver.init()
     # cnt = await visit_url("http://evem.gov.si/robots.txt")
-    response_obj = visit_url("http://evem.gov.si/")
+    # response_obj = visit_url("http://evem.gov.si/")
     # response_obj = visit_url("https://www.ajpes.si/Registri/Poslovni_register/Splosno")
+    url = "https://www.ajpes.si/Doc/Registri/PRS/Shema_PRS.pdf"
+
+    split_url = url.split("/")
+    page_name = split_url[-1]
+    split_page_name = page_name.split(".")
+
+    print("pg name", page_name)
+
+    allowed_binary_docs = ["pdf", "doc", "docx", "ppt", "pptx"]
+
+    if len(split_page_name) >= 2 and split_page_name[-1] in allowed_binary_docs:
+        # do things differently
+        print("pg name", page_name)
+        pass
+
+    response_obj = visit_url(url)
     print("res", response_obj["status"], response_obj["actual_url"])
 
     actual_url = response_obj["actual_url"]

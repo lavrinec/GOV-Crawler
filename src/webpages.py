@@ -4,8 +4,6 @@ from bs4 import BeautifulSoup
 import json
 import re
 import requests
-import shutil
-import magic
 
 
 def visit_url(url):
