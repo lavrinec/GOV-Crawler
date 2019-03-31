@@ -27,7 +27,7 @@ def crawler_worker():
         allowed_binary_docs = ["pdf", "doc", "docx", "ppt", "pptx"]
 
         if len(split_page_name) >= 2 and split_page_name[-1] in allowed_binary_docs:
-            print("pg name", page_name)
+            # if the ending is pdf, doc, ...
 
             response = get_binary_data(page.url)
             # response = {name, data, content_type}
