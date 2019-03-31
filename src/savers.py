@@ -78,7 +78,3 @@ def save_images_to_db(img_array, page_id):
         save_document_to_db(img, page_id)
 
     return True
-
-
-def save_image_to_db(url, page_id):
-    return True
