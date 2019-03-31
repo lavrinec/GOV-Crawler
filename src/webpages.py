@@ -42,7 +42,7 @@ def get_url_content(url):
     print("content returned ", status_code)
 
     redirected_from = None
-    if not url is webdriver.browser.current_url:
+    if url is not webdriver.browser.current_url:
         redirected_from = url
 
     return {
