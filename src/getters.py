@@ -339,9 +339,9 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
         #   filename = image_data["name"]
         #   content_type = image_data["content_type"]
         #   data = image_data["data"]
-
+        time = datetime.datetime.now()
         img = Image(url=image_url, filename=image_data["name"], content_type=image_data["content_type"],
-                    data=image_data["data"])
+                    data=image_data["data"], accessed_time=time)
         save_image_to_db(img)
         image_id = get_image_from_db_by_url(image_url)
     add_page_image(image_id, page_id)
