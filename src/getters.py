@@ -339,7 +339,7 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
         #   filename = image_data["name"]
         #   content_type = image_data["content_type"]
         #   data = image_data["data"]
-        time = datetime.datetime.now()
+        time = datetime.now()
         img = Image(url=image_url, filename=image_data["name"], content_type=image_data["content_type"],
                     data=image_data["data"], accessed_time=time)
         save_image_to_db(img)
