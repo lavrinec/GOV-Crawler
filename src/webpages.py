@@ -24,34 +24,38 @@ def get_url_content(url):
 
     webdriver.browser.get(url)
 
-    har = json.loads(webdriver.browser.get_log('har')[0]['message'])
-    response = har['log']['entries'][0]['response']
+    try:
+        har = json.loads(webdriver.browser.get_log('har')[0]['message'])
+        response = har['log']['entries'][0]['response']
 
-    status_code = response['status']
+        status_code = response['status']
 
-    if not status_code:  # if status_code == None
-        if "not found" in response['statusText'].lower():
-            status_code = 404
-        # other, e.q. 401, 402, 403, ...
+        if not status_code:  # if status_code == None
+            if "not found" in response['statusText'].lower():
+                status_code = 404
+            # other, e.q. 401, 402, 403, ...
 
-    content_type = list(filter(lambda x: x["name"] == "Content-Type", response['headers']))[0]["value"]
+        content_type = list(filter(lambda x: x["name"] == "Content-Type", response['headers']))[0]["value"]
 
-    content = webdriver.browser.page_source
-    parsed_content = BeautifulSoup(content, 'html.parser')
+        content = webdriver.browser.page_source
+        parsed_content = BeautifulSoup(content, 'html.parser')
 
-    print("content returned ", status_code)
+        print("content returned ", status_code)
 
-    redirected_from = None
-    if url is not webdriver.browser.current_url:
-        redirected_from = url
+        redirected_from = None
+        if url is not webdriver.browser.current_url:
+            redirected_from = url
 
-    return {
-        "status": status_code,
-        "content": parsed_content,
-        "content_type": content_type,
-        "actual_url": webdriver.browser.current_url,
-        "redirected_from": redirected_from
-    }
+        return {
+            "status": status_code,
+            "content": parsed_content,
+            "content_type": content_type,
+            "actual_url": webdriver.browser.current_url,
+            "redirected_from": redirected_from
+        }
+
+    except IndexError:
+        return None
 
 
 def check_a_url(a_tag, base_url, domain):

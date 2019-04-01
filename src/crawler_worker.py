@@ -28,6 +28,7 @@ def crawler_worker():
         split_page_name = page_name.split(".")
 
         allowed_binary_docs = ["PDF", "DOC", "DOCX", "PPT", "PPTX"]
+        disallowed_formats = ["ZIP", "TAR", "7Z", "ISO", "GZ", "GZ2", "BZ2", "FLA", "FLV", "SWF", "SWT", "SWC"]
 
         extension = str.upper(split_page_name[-1])
 
@@ -41,26 +42,28 @@ def crawler_worker():
             # update page type and reservation
             finish_page(page, page_type="BINARY")
 
-        else:
+        elif (len(split_page_name) < 2) or (len(split_page_name) >= 2 and extension not in disallowed_formats):
             # if url is a web page
             response = visit_url(page.url)
             # response = {status, content, content_type, actual_url, redirected_from}
+            # response = None if something goes wrong
 
-            # get links on current page
-            links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
-            for link in links:
-                add_link_to_page(link, page)
+            if response:
+                # get links on current page
+                links = get_links_from_content(response["actual_url"], response["content"])  # array of urls
+                for link in links:
+                    add_link_to_page(link, page)
 
-            # get images urls and save images to db if needed
-            images_urls = get_img_urls_from_content(response["actual_url"], response["content"])
-            for img_url in images_urls:
-                connect_image_with_page(page.id, img_url, get_binary_data)
+                # get images urls and save images to db if needed
+                images_urls = get_img_urls_from_content(response["actual_url"], response["content"])
+                for img_url in images_urls:
+                    connect_image_with_page(page.id, img_url, get_binary_data)
 
-            # update page type and reservation
-            page.html_content = str(response["content"])
-            page.http_status_code = response["status"]
-            page.accessed_time = datetime.datetime.now()
-            finish_page(page, page_type="HTML")
+                # update page type and reservation
+                page.html_content = str(response["content"])
+                page.http_status_code = response["status"]
+                page.accessed_time = datetime.datetime.now()
+                finish_page(page, page_type="HTML")
 
         page = get_not_reserved_page()
 
