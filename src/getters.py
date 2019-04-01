@@ -76,7 +76,7 @@ def add_frontier_url(url):
 def add_frontier(url):
     if can_fetch(url):
         add_frontier_url(url)
-    else:
+    #else:
         #print("URL not allowed: ", url)
     pass
 
@@ -308,10 +308,9 @@ def get_page_from_url(link):
 def add_link_to_page(link, page):
     #print(link)
     if can_fetch(link):
-
-	# removes hashes (anchors)
-	split_by_hash = link.split("#")
-	link = split_by_hash[0]
+        # removes hashes (anchors)
+        split_by_hash = link.split("#")
+        link = split_by_hash[0]
 
 	# sort query params by abc
         split_by_query = link.split("?")
