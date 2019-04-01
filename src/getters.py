@@ -28,11 +28,13 @@ def get_page_from_db():
 def get_all_sites():
     for u in db_manager.session.query(Site).order_by(Site.id):
         #print(u)
+        pass
 
 
 def get_all_pages():
     for u in db_manager.session.query(Page).order_by(Page.id):
         #print(u)
+        pass
 
 
 def get_not_reserved_site():
