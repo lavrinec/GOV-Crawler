@@ -21,7 +21,7 @@ def can_fetch(url) -> bool:
     if rps[result] is None:
         robots = get_site_robots_from_db(result)
         add_rp(result, robots)
-    print(result)
+    #print(result)
     return rps[result].can_fetch("*", url)
 
 

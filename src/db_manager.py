@@ -22,6 +22,7 @@ def init():
 
 
 def handel_exception(e, rollback, where, second=None):
-    print('exception for ', where, second, str(e))
+    if "duplicate" not in str(e):
+	print('exception for ', where, second, str(e))
     if rollback:
         session.rollback()

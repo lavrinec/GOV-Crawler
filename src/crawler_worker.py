@@ -13,10 +13,10 @@ from src import webdriver
 
 # main function for one process
 def crawler_worker():
-    print("crawler worker")
+    #print("crawler worker")
 
     db_manager.init()
-    print("session", db_manager.session)
+    #print("session", db_manager.session)
 
     webdriver.init()
     getters.init()
