@@ -9,3 +9,4 @@ def init():
 def close():
     print("browser closed")
     browser.close()
+    browser.quit()
