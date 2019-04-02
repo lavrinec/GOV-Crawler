@@ -8,7 +8,7 @@ from io import BytesIO
 from PIL import Image
 
 def visit_url(url):
-    print("visit url", url)
+    #print("visit url", url)
 
     # mark url as visited/processed in db
 
@@ -20,7 +20,7 @@ def visit_url(url):
 
 
 def get_url_content(url):
-    print("get content for", url)
+    #print("get content for", url)
 
     webdriver.browser.get(url)
 
@@ -40,7 +40,7 @@ def get_url_content(url):
         content = webdriver.browser.page_source
         parsed_content = BeautifulSoup(content, 'html.parser')
 
-        print("content returned ", status_code)
+        #print("content returned ", status_code)
 
         redirected_from = None
         if url is not webdriver.browser.current_url:
@@ -138,7 +138,7 @@ def check_img_url(img_tag, base_url, domain):
 
 
 def get_links_from_content(base_url, parsed_content):
-    print("get links from content")
+    #print("get links from content")
 
     base_tag = parsed_content.find('base')
     if base_tag:
@@ -161,7 +161,7 @@ def get_links_from_content(base_url, parsed_content):
 
 
 def get_img_urls_from_content(base_url, parsed_content):
-    print("get img urls from content")
+    #print("get img urls from content")
 
     base_tag = parsed_content.find('base')
     if base_tag:
