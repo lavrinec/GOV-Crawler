@@ -312,7 +312,7 @@ def add_link_to_page(link, page):
         split_by_hash = link.split("#")
         link = split_by_hash[0]
 
-	# sort query params by abc
+        # sort query params by abc
         split_by_query = link.split("?")
         if len(split_by_query) == 2:
             query_params = split_by_query[-1].split("&")
@@ -339,7 +339,6 @@ def connect_image_with_page(page_id, image_url, get_binary_data):
         image_data = get_binary_data(image_url)
         # image_data = {name, data, content_type}
 
-        # TODO check if data is saved properly
         # Image object should be
         #   filename = image_data["name"]
         #   content_type = image_data["content_type"]
