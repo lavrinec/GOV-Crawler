@@ -103,7 +103,7 @@ def get_site_robots(site):
             # print("No sitemap match")
             site.sitemap_content = "None"
     except:
-        content: "Disallow: /"
+        content = "Disallow: /"
         site.robots_content = content
         base = get_base_url(site.domain)
         add_rp(base, content)
