@@ -27,13 +27,13 @@ def get_page_from_db():
 
 def get_all_sites():
     for u in db_manager.session.query(Site).order_by(Site.id):
-        #print(u)
+        # print(u)
         pass
 
 
 def get_all_pages():
     for u in db_manager.session.query(Page).order_by(Page.id):
-        #print(u)
+        # print(u)
         pass
 
 
@@ -67,7 +67,7 @@ def get_site_id_for_url(url):
 
 
 def add_frontier_url(url):
-    #print("Adding to frontier ", url)
+    # print("Adding to frontier ", url)
     site_id = get_site_id_for_url(url)
     frontier = Page(url=url, site_id=site_id, page_type_code='FRONTIER')
     save_page_to_db(frontier)
@@ -76,8 +76,8 @@ def add_frontier_url(url):
 def add_frontier(url):
     if can_fetch(url):
         add_frontier_url(url)
-    #else:
-        #print("URL not allowed: ", url)
+    # else:
+    # print("URL not allowed: ", url)
     pass
 
 
@@ -88,18 +88,18 @@ def get_site_robots(site):
         content = r.text
     else:
         content = "Allow: /"
-    #print(content)
+    # print(content)
     site.robots_content = content
     base = get_base_url(site.domain)
     add_rp(base, content)
     x = re.findall("^Sitemap:(.*)", content, re.MULTILINE)
 
     if x:
-        #print("YES! We have a sitemap match!", x)
+        # print("YES! We have a sitemap match!", x)
         for val in x:
             get_site_sitemap(val.strip(), site)
     else:
-        #print("No sitemap match")
+        # print("No sitemap match")
         site.sitemap_content = "None"
 
 
@@ -109,7 +109,7 @@ def process_sitemap(xml):
     url_tags = soup.find_all("url")
     xml_dict = []
 
-    #print("The number of sitemaps are {0} and {1}".format(len(sitemap_tags), len(url_tags)))
+    # print("The number of sitemaps are {0} and {1}".format(len(sitemap_tags), len(url_tags)))
 
     for sitemap in sitemap_tags:
         xml_dict.append(sitemap.findNext("loc").text)
@@ -122,7 +122,7 @@ def process_sitemap(xml):
 
 
 def get_site_sitemap(url, site):
-    #print("Sitemap za ", url)
+    # print("Sitemap za ", url)
     r = requests.get(url)
     status = r.status_code
     if status is not None and 200 <= status < 300:
@@ -153,7 +153,7 @@ def get_new_site():
     site = get_not_reserved_site()
     if site is None:
         return None
-    #print("New site ", site.domain)
+    # print("New site ", site.domain)
     set_site_id(get_base_url(site.domain), site.id)
     get_site_data(site)
     cancel_reservation(site)
@@ -188,7 +188,7 @@ def get_not_reserved(param, *restrictions):
 
 
 def finish_page(page, page_type='HTML'):
-    #print("finish page")
+    # print("finish page")
     # TODO set page new page_type_code
     page.page_type_code = page_type
     cancel_reservation(page)
@@ -229,11 +229,11 @@ def get_base_url(url):
 
 def get_full_base_url(url):
     parsed_uri = urlparse(url)
-    return '{uri.scheme}//{uri.netloc}/'.format(uri=parsed_uri)
+    return '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
 
 
 def add_site(url, base):
-    #print("Adding to sites ", url)
+    print("Adding to sites ", url)
     site = Site(domain=url)
     save_site_to_db(site)
     return get_site_from_db(base)
@@ -244,35 +244,33 @@ def process_fetch_result(result, url, first_time):
     if robots_check is None:
         site = get_site_from_db(result)
         if site is None:
-            #print("Currently skipping site ", result)
-            # TODO uncoment when needing all sites from .gov.si
-            # site = add_site(get_full_base_url(url), result)
-            return False
+            site = add_site(get_full_base_url(url), result)
+            # return False
         else:
             set_site_id(result, site.id)
         robots = site.robots_content
-        if robots == "":
-            #print("first time robots for domain ", result)
+        if robots == "" or robots is None:
+            # print("first time robots for domain ", result)
             if first_time:
                 get_site_data(site)
                 return process_fetch_result(result, url, False)
             else:
                 return False
-        #print("Saving inner robots", robots)
+        # print("Saving inner robots", robots)
         robots_check = add_rp(result, robots)
     if robots_check is None:
-        #print("find out why is None")
+        # print("find out why is None")
         return False
     else:
         can = robots_check.can_fetch("*", url)
-        #print("results for site ", result, url, can)
+        # print("results for site ", result, url, can)
         return can
 
 
 def can_fetch(url) -> bool:
     result = get_base_url(url)
     if ".gov.si" not in result:
-        #print("ni v gov.si", result)
+        # print("ni v gov.si", result)
         return False
     return process_fetch_result(result, url, True)
 
@@ -306,7 +304,7 @@ def get_page_from_url(link):
 
 
 def add_link_to_page(link, page):
-    #print(link)
+    # print(link)
     if can_fetch(link):
         # removes hashes (anchors)
         split_by_hash = link.split("#")
@@ -332,7 +330,7 @@ def add_page_image(image_id, page_id):
 
 def connect_image_with_page(page_id, image_url, get_binary_data):
     if ".gov.si" not in image_url:
-        #print("image is not inside gov.si", image_url)
+        # print("image is not inside gov.si", image_url)
         return False
     image_id = get_image_from_db_by_url(image_url)
     if image_id is None:

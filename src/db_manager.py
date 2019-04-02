@@ -9,7 +9,7 @@ def connect_to_db():
     file = open("connection.txt", "r")
     read = file.read()
     # print(read)
-    dbschema = 'crawldb'  # Searches left-to-right
+    dbschema = 'crawlfull'  # Searches left-to-right
     engine = create_engine(read,
                            connect_args={'options': '-csearch_path={}'.format(dbschema)})
     Session = sessionmaker(bind=engine)
