@@ -82,26 +82,32 @@ def add_frontier(url):
 
 
 def get_site_robots(site):
-    r = requests.get(site.domain + "robots.txt")
-    status = r.status_code
-    if status is not None and 200 <= status < 300:
-        content = r.text
-    else:
-        content = "Allow: /"
-    # print(content)
-    site.robots_content = content
-    base = get_base_url(site.domain)
-    add_rp(base, content)
-    x = re.findall("^Sitemap:(.*)", content, re.MULTILINE)
+    try:
+        r = requests.get(site.domain + "robots.txt")
+        status = r.status_code
+        if status is not None and 200 <= status < 300:
+            content = r.text
+        else:
+            content = "Allow: /"
+        # print(content)
+        site.robots_content = content
+        base = get_base_url(site.domain)
+        add_rp(base, content)
+        x = re.findall("^Sitemap:(.*)", content, re.MULTILINE)
 
-    if x:
-        # print("YES! We have a sitemap match!", x)
-        for val in x:
-            get_site_sitemap(val.strip(), site)
-    else:
-        # print("No sitemap match")
+        if x:
+            # print("YES! We have a sitemap match!", x)
+            for val in x:
+                get_site_sitemap(val.strip(), site)
+        else:
+            # print("No sitemap match")
+            site.sitemap_content = "None"
+    except:
+        content: "Disallow: /"
+        site.robots_content = content
+        base = get_base_url(site.domain)
+        add_rp(base, content)
         site.sitemap_content = "None"
-
 
 def process_sitemap(xml):
     soup = BeautifulSoup(xml)
