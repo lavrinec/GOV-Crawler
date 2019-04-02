@@ -183,13 +183,12 @@ def get_binary_data(url):
     split_url = url.split("/")
     name = split_url[-1]
 
-    try:
+    content_type = "image"
+
+    if r.headers['Content-Type']:
         content_type = r.headers['Content-Type']
-    except:
-        if len(name.split(".")) >= 2:
-            content_type = name.split(".")[-1]
-        else:
-            content_type = "image"
+    elif len(name.split(".")) >= 2:
+        content_type = name.split(".")[-1]
 
     # test which works
     # raw = r.raw  # ne dela
