@@ -254,16 +254,19 @@ def process_fetch_result(result, url, first_time):
             # return False
         else:
             set_site_id(result, site.id)
-        robots = site.robots_content
-        if robots == "" or robots is None:
-            # print("first time robots for domain ", result)
-            if first_time:
-                get_site_data(site)
-                return process_fetch_result(result, url, False)
-            else:
-                return False
-        # print("Saving inner robots", robots)
-        robots_check = add_rp(result, robots)
+        try:
+            robots = site.robots_content
+            if robots == "" or robots is None:
+                # print("first time robots for domain ", result)
+                if first_time:
+                    get_site_data(site)
+                    return process_fetch_result(result, url, False)
+                else:
+                    return False
+            # print("Saving inner robots", robots)
+            robots_check = add_rp(result, robots)
+        except:
+            return False
     if robots_check is None:
         # print("find out why is None")
         return False
