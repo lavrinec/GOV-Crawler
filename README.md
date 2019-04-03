@@ -39,7 +39,7 @@ Note that you must then install needed libraries with `pipenv` not `pip`.
 
 - requests: run `pip install requests`
 
-Or all at one: `pip install selenium psycopg2 bs4 requests`
+Or all at one: `pip install selenium psycopg2 sqlalchemy bs4 requests`
 
 ## Running
 
