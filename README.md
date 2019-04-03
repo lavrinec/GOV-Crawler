@@ -6,7 +6,7 @@ This is web crawler with the purpose of obtaining data from *.gov.si pages.
 
 More about it you can read in report.pdf
 
-Also visit https://zigacernigoj.github.io/GOV-crawler-visualizer/ for visualization example ([git repo of this](https://github.com/zigacernigoj/GOV-crawler-visualizer)).
+Also visit https://zigacernigoj.github.io/GOV-crawler-visualizer/ for visualization example, it is interactive ([git repo](https://github.com/zigacernigoj/GOV-crawler-visualizer)).
 
 ## Requirements
 
