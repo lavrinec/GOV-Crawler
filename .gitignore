@@ -110,3 +110,4 @@ venv.bak/
 
 # database string
 /connection.txt
+/crawler/connection.txt

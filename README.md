@@ -1,5 +1,13 @@
 # GOV-Crawler
 
+## About
+
+This is web crawler with the purpose of obtaining data from *.gov.si pages.
+
+More about it you can read in report.pdf
+
+Also visit https://zigacernigoj.github.io/GOV-crawler-visualizer/ for visualization example.
+
 ## Requirements
 
 ### Python
