@@ -31,7 +31,7 @@ Note that you must then install needed libraries with `pipenv` not `pip`.
 - Selenium: install Selenium by running `pip install selenium` in console
   - Note: webdriver for headless browser for Selenium is already provided
 
-- psycopg2 vs psycopg2-binary: run `pip install psycopg2`
+- psycopg2: run `pip install psycopg2`
 
 - sqlalchemy: run `pip install sqlalchemy`
 
@@ -39,6 +39,7 @@ Note that you must then install needed libraries with `pipenv` not `pip`.
 
 - requests: run `pip install requests`
 
+Or all at one: `pip install selenium psycopg2 bs4 requests`
 
 ## Running
 
